@@ -163,6 +163,20 @@ func main() {
 	}
 
 	// Start the web server
-	log.Printf("Server started on http://localhost:%s", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	if port == "80" {
+		log.Printf("Server started on http://localhost:%s", port)
+		log.Fatal(http.ListenAndServe(":"+port, nil))
+	}
+	// Start HTTPS Web Server
+	// Use the paths to your certificate and key
+	if port == "443" {
+		log.Printf("Starting HTTPS Server")
+		err := http.ListenAndServeTLS(":"+port, "/etc/letsencrypt/live/wanxuaneducation.com/fullchain.pem",
+			"/etc/letsencrypt/live/wanxuaneducation.com/privkey.pem", nil)
+		if err != nil {
+			log.Fatal("ListenAndServeTLS: ", err)
+		}
+	}
+	log.Fatal("Unsupported web server port: ", port)
+
 }
