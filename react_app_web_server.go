@@ -108,6 +108,11 @@ func testHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "1234")
 }
 
+func redirectToHTTPS(w http.ResponseWriter, r *http.Request) {
+	// Redirect to the same host and path with HTTPS scheme
+	http.Redirect(w, r, "https://"+r.Host+r.URL.String(), http.StatusMovedPermanently)
+}
+
 func main() {
 
 	setCustomPath()
@@ -165,7 +170,7 @@ func main() {
 	// Start the web server
 	if port == "80" {
 		log.Printf("Server started on http://localhost:%s", port)
-		log.Fatal(http.ListenAndServe(":"+port, nil))
+		log.Fatal(http.ListenAndServe(":"+port, http.HandlerFunc(redirectToHTTPS)))
 	}
 	// Start HTTPS Web Server
 	// Use the paths to your certificate and key
